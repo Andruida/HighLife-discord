@@ -1,4 +1,7 @@
 config.ini
+messages.ini
 test.bat
 stop.bat
+restart.bat
+logs.bat
 *.log
