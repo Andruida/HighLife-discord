@@ -102,10 +102,22 @@ def content_generator(online,data, last_update, dev_online=True):
 	embed.add_field(name=title.get("forum", unknown), value=message.get("forum", unknown), inline=False)
 	embed.add_field(name=title.get("facebook", unknown), value=message.get("facebook", unknown), inline=False)
 	embed.add_field(name=title.get("leaderboard", unknown), value=message.get("leaderboard", unknown)+"\n\u200b", inline=False)
-	embed.add_field(name=title.get("status", unknown), value=message.get("online", unknown) if online else message.get("offline", unknown), inline=True)
-	embed.add_field(name=title.get("online_players", unknown), value="{}/{}".format(len(data), message.get("online_max", -1)) if online else message.get("offline", unknown), inline=True)
-	embed.add_field(name=title.get("dev_status", unknown), value=message.get("online", unknown)+"\n\u200b" if dev_online else message.get("offline", unknown)+"\n\u200b", inline=True)
 
+	dev_message = message.get("online", unknown) if dev_online else message.get("offline", unknown)
+	main_message = message.get("online", unknown) if online else message.get("offline", unknown)
+	always_online = message.get("online", unknown)
+	always_online_fields = title.get("always_online", "").split(",") # comma separated field in messages.ini; TODO: allow spaces
+
+	embed.add_field(name=title.get("dev_status", unknown), value=dev_message, inline=True)
+	embed.add_field(name=title.get("status", unknown), value=main_message, inline=True)
+
+	embed.add_field(name=title.get("c_status0", unknown), value=main_message if not "0" in always_online_fields else always_online, inline=True)
+	embed.add_field(name=title.get("c_status1", unknown), value=main_message if not "1" in always_online_fields else always_online, inline=True)
+	embed.add_field(name=title.get("c_status2", unknown), value=main_message if not "2" in always_online_fields else always_online, inline=True)
+	embed.add_field(name=title.get("c_status3", unknown), value=(main_message if not "3" in always_online_fields else always_online)+"\n\u200b", inline=True)
+
+	embed.add_field(name=title.get("online_players", unknown), value="{}/{}".format(len(data), message.get("online_max", -1)) if online else message.get("offline", unknown), inline=False)
+	
 	players = ["","",""]
 	data.sort(key=lambda x: x.get("name", unknown)[:20])
 	for p in data:
