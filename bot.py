@@ -17,9 +17,7 @@ logger.addHandler(handler)
 config = configparser.ConfigParser()
 
 config.read("config.ini")
-
-messages = configparser.ConfigParser()
-messages.read("messages.ini")
+config.read("messages.ini")
 
 bot = commands.Bot(command_prefix=config["discord"]["prefix"])
 bot.remove_command('help')
@@ -55,7 +53,10 @@ async def update_status():
 	last_update = datetime.datetime.now()
 	while not bot.is_closed():
 		if status_message:
-			messages.read("messages.ini")
+			try:
+				config.read("messages.ini")
+			except:
+				print("Couldn't read messages.ini. Ignoring...")
 			online = False
 			dev_online = False
 			try:
@@ -85,9 +86,9 @@ def content_generator(online,data, last_update, dev_online=True):
 	else:
 		color = 0xE03F3F
 
-	unknown = messages["global"].get("unknown", "*Unknown*")
-	message = messages["message"]
-	title = messages["title"]
+	unknown = config["global"].get("unknown", "*Unknown*")
+	message = config["message"]
+	title = config["title"]
 
 	embed = discord.Embed(color=color, description=message.get("description", unknown)+"\n\u200b")
 	embed.set_author(name=message.get("name", unknown), url=message.get("url", discord.Embed.Empty), icon_url=message.get("icon", discord.Embed.Empty))
